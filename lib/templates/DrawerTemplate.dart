@@ -4,7 +4,6 @@ import '../screens/About.dart';
 import '../screens/TodaysHoroscope.dart';
 import '../screens/Home.dart';
 import '../screens/AskAnyQuestion.dart';
-import '../screens/Login.dart';
 
 class DrawerTemplate extends StatelessWidget {
 
@@ -20,8 +19,8 @@ class DrawerTemplate extends StatelessWidget {
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text("Ratnesh Karbhari"),
-            accountEmail: Text("ratneshkarbhari74@gmail.com"),
+            accountName: Text(firstName+" "+lastName),
+            accountEmail: Text(email),
           ),
           ListTile(
             title: Text("Todays Horoscope"),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../screens/Login.dart';
 
 
 
@@ -69,7 +70,11 @@ class _AppBarContentState extends State<AppBarContent> {
           onPressed: _makingPhoneCall
         ),
         (firstName!=null)?IconButton(
-          onPressed: ()async{},
+          onPressed: () async{
+            var prefs = await SharedPreferences.getInstance();
+            prefs.clear();
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>Login()));
+          },
           icon: Icon(Icons.logout),
         ):Text("")
       ],
