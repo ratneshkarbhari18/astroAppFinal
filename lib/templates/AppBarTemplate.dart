@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../screens/Login.dart';
+import '../screens/Notifications.dart';
 
 
 
@@ -54,11 +54,6 @@ class _AppBarContentState extends State<AppBarContent> {
     _setUserState();
   }
 
-  var _url = "tel:9137976398";
-
-  void _makingPhoneCall() async =>
-    await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +61,10 @@ class _AppBarContentState extends State<AppBarContent> {
       title: Text(this.title),
       actions: [
         IconButton(
-          icon: Icon(Icons.call), 
-          onPressed: _makingPhoneCall
+          icon: Icon(Icons.notifications), 
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> Notifications()));
+          }
         ),
         (firstName!=null)?IconButton(
           onPressed: () async{

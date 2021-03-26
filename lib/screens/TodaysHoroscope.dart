@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import '../templates/AppBarTemplate.dart';
 import '../templates/DrawerTemplate.dart';
@@ -34,10 +33,12 @@ class _TodaysHoroscopeState extends State<TodaysHoroscope> {
     });
   }
 
+  
+
   @override
   void initState() {
     super.initState();
-    _setUserState();
+     _setUserState();
   }
 
 
@@ -62,36 +63,38 @@ class TodaysHoroscopePage extends StatefulWidget {
 
 class _TodaysHoroscopePageState extends State<TodaysHoroscopePage> {
 
-  var horoScope;
-  var _error;
+  var horoScopeData;
+  var _error="";
+  var horoscopeData;
 
   Future fetchTodaysHoroscope() async{
     DateTime todaysDate = DateTime.now();
     String todaysDateFormatted = DateFormat('dd-MM-yyyy').format(todaysDate);
     var url = Constants.apiUrl+'daily-horoscope-api';
-    var response = await http.post(Uri.parse(url), body: {'api_key': '5f4dbf2e5629d8cc19e7d51874266678', 'date': todaysDateFormatted, });
-    if(response.statusCode==200){
-      
-      var responseBody = response.body;
-      var responseBodyObject = jsonDecode(responseBody);
-      setState(() {
-        horoScope=jsonDecode(responseBodyObject["horoscope"]);
-      });
 
-    }else{
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.fields.addAll({
+      'api_key': '5f4dbf2e5629d8cc19e7d51874266678',
+      'date': todaysDateFormatted
+    });
+
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var jsonRes = await response.stream.bytesToString();
       setState(() {
-        _error = "Cannot connect to our Servers, Please try later or check your internet";
+        horoScopeData =  jsonDecode(jsonRes)["data"];
       });
     }
+    else {
+      print(response.reasonPhrase);
+      setState(() {
+        _error = response.reasonPhrase;
+      });
+    }
+    
   }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchTodaysHoroscope();
-  }
-
-  
 
   var allSigns = ["aries",
                     "taurus",
@@ -106,35 +109,36 @@ class _TodaysHoroscopePageState extends State<TodaysHoroscopePage> {
                     "aquarius",
                     "pisces"];
 
+  void initState() {
+    super.initState();
+    fetchTodaysHoroscope();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: (horoScope==null) ? Center(child: CircularProgressIndicator()) :ListView(
-            shrinkWrap: true,
-            physics: ScrollPhysics(),
+          child: Column(
             children: [
-              ListView.builder(
+              Text((jsonDecode(horoScopeData)["title"]).toUpperCase(),style: TextStyle(fontSize: 25.0,fontWeight: FontWeight.bold),),
+              SizedBox(height:20.0),
+              (horoScopeData==null)?CircularProgressIndicator():ListView.builder(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemBuilder: (context,index){
+              return ListView(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-                itemBuilder: (context,index) {
-                  return ListView(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    children: [
-                      Text(allSigns[index].toUpperCase(),style: TextStyle(fontSize: 20.0)),
-                      SizedBox(height: 10.0,),
-                      Text(horoScope[allSigns[index]]),
-                      SizedBox(height: 10.0,),
-                    ],
-                  );
-                }, 
-                itemCount: allSigns.length,
-              )
+                children: [
+                  Text(allSigns[index].toUpperCase()+": ",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold),),
+                  Text(jsonDecode(jsonDecode(horoScopeData)["horoscopes"])[allSigns[index]])                  
+                ],
+              );
+            },itemCount: allSigns.length,)
             ],
-          ),
+          )
         ),
       ),
     );

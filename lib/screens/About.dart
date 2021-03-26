@@ -3,8 +3,6 @@ import 'package:astro_app/templates/DrawerTemplate.dart';
 import 'package:astro_app/templates/DrawerTemplateGeneral.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import './Service.dart';
 
 
 class About extends StatefulWidget {

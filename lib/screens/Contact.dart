@@ -55,7 +55,7 @@ class _ContactPageState extends State<ContactPage> {
     
   
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
     return SafeArea(
         child: SingleChildScrollView( 
         child: Padding(
